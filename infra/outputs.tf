@@ -2,9 +2,9 @@
 #   value = 
 # }
 
-# output "lb_endpoint" {
-#   value = 
-# }
+output "lb_endpoint" {
+  value = aws_lb.techtest_app.dns_name
+}
 
 # output "db_endpoint" {
 #   value = 
