@@ -19,3 +19,23 @@ output "db_pass" {
   description = "Password for logging in to the database"
   sensitive   = true
 }
+
+data "template_file" "inventory" {
+  template = file("../ansible/templates/inventory.tpl")
+  depends_on = [
+    aws_instance.techtest_app
+  ]
+  vars = {
+    ec2_public_ip = aws_instance.techtest_app.public_ip
+  }
+}
+
+resource "null_resource" "inventory" {
+  triggers = {
+    template_rendered = data.template_file.inventory.rendered
+  }
+}
+
+output "ansible_inventory" {
+  value = data.template_file.inventory.rendered
+}
