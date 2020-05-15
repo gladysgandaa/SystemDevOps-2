@@ -1,0 +1,7 @@
+"DbUser" = "${db_username}"
+"DbPassword" = "${db_password}"
+"DbName" = "app"
+"DbPort" = "5432"
+"DbHost" = "${db_host}"
+"ListenHost" = "0.0.0.0"
+"ListenPort" = "80"

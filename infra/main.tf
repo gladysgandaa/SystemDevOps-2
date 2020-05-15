@@ -4,6 +4,7 @@ provider "aws" {
 }
 
 resource "aws_security_group" "allow_http_ssh" {
+  name        = "Security Group"
   description = "Allow SSH and http inbound traffic"
   vpc_id      = aws_vpc.main.id
 
@@ -16,6 +17,14 @@ resource "aws_security_group" "allow_http_ssh" {
   }
 
   ingress {
+    description = "https from internet"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     description = "http from internet"
     from_port   = 80
     to_port     = 80
@@ -23,10 +32,27 @@ resource "aws_security_group" "allow_http_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "database from ec2"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description = "database to ec2"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "https to internet"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -35,22 +61,19 @@ resource "aws_security_group" "allow_http_ssh" {
   }
 }
 
-# data "template_file" "web_ansible" { 
-#     count = length(split(",",var.web_ips))
-#     template = file("../ansible/templates/hostname.tpl")
-#     vars = {
-#         index = "count.index + 1"
-#         name  = "web"
-#         env   = "p"
-#         # extra = "ansible_host = element(split(",",var.web_ips),count.index)"
-#         # extra = ""
-#     }
+# terraform {
+#   backend "s3" {
+#     bucket = "techtestapp-s3679839-bucket"
+#     key    = "terraform.tfstate.d"
+#     region = "us-east-1"
+#   }
 # }
 
-# resource "template_file" "ansible_inventory" {
-#     template = file("../ansible/templates/inventory.tpl")
-#     vars = {
-#         env         = "production"
-#         web_hosts   =  join("\n", template_file.web_ansible.*.rendered)
-#     }
+# data "terraform_remote_state" "network" {
+#   backend = "s3"
+#   config = {
+#     bucket = "terraform-state-prod"
+#     key    = "network/terraform.tfstate"
+#     region = "us-east-1"
+#   }
 # }

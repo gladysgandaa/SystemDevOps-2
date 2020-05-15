@@ -30,12 +30,34 @@ data "template_file" "inventory" {
   }
 }
 
+data "template_file" "database" {
+  template = file("../ansible/templates/database.tpl")
+  depends_on = [
+    aws_db_instance.techtest_app
+  ]
+  vars = {
+    db_host     = aws_db_instance.techtest_app.address
+    db_username = aws_db_instance.techtest_app.username
+    db_password = aws_db_instance.techtest_app.password
+  }
+}
+
 resource "null_resource" "inventory" {
   triggers = {
     template_rendered = data.template_file.inventory.rendered
   }
 }
 
+resource "null_resource" "database" {
+  triggers = {
+    template_rendered = data.template_file.database.rendered
+  }
+}
+
 output "ansible_inventory" {
   value = data.template_file.inventory.rendered
+}
+
+output "database_template" {
+  value = data.template_file.database.rendered
 }

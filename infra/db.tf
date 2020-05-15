@@ -5,12 +5,13 @@ resource "aws_db_subnet_group" "db-subnet" {
 }
 
 resource "aws_db_instance" "techtest_app" {
+  identifier           = "postgres"
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"
   engine_version       = "9.6.16"
   instance_class       = "db.t2.micro"
-  name                 = "mydb"
+  name                 = "app"
   username             = var.db_username
   password             = var.db_password
   db_subnet_group_name = aws_db_subnet_group.db-subnet.id

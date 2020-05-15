@@ -17,3 +17,4 @@ variable "db_password" {
 variable "web_ips" {
   default = "3.86.70.134"
 }
+

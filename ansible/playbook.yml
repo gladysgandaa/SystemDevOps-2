@@ -1,82 +1,106 @@
-- name: goLang installation
-  hosts: all
-  become: yes
-  become_method: sudo
-  gather_facts: yes
-  vars:
-    home_dir: "/home/ec2-user"
-    file_owner: "ec2-user"
-    new_go_version: "1.14.2"
+# - name: Install required dependencies
+#   hosts: all
+#   become: yes
+#   become_method: sudo
+#   vars:
+#     home_dir: "/home/ec2-user"
+#     go_path: "/home/ec2-user/go"
+#     file_owner: "ec2-user"
+#     new_go_version: "1.14.2"
+#   tasks: 
 
-  tasks: 
-  - debug: msg="play_hosts={{play_hosts}}"
+#   - name: Install git
+#     hosts: all
+#     shell: |
+#       yum install -y git
 
-  - debug: msg="home={{ home_dir }}"
+#   - name: Install go
+#     hosts: all
+#     shell: |
+#       yum install -y go
+    
+#   - name : Create go directories in home
+#     file:
+#       path: "{{item}}"
+#       state: directory
+#       owner: "{{file_owner}}"
+#       group: "{{file_owner}}"
+#       mode: 0775
+#     with_items:
+#       - "{{home_dir}}/go"
+#       - "{{home_dir}}/go/bin"
 
-  - name: Check golang version
-    command: bash -c "/usr/local/go/bin/go version|sed -e 's/go version go//g'|cut -d' ' -f1"
-    ignore_errors: yes
-    register: go_version
-    changed_when: false
-  - debug: msg="go_version={{go_version.stdout}}"
-  - debug: msg="new_go_version={{new_go_version}}"
-  - name: check current go version
-    set_fact:
-      installed: true
-      when: go_version.stdout != "" and "go_version.stdout | version_compare('{{new_go_version}}', operator="ge",strict=True)"
-  - debug: msg="Continuing with installation"
+#   - name: modify .bashrc
+#     blockinfile: 
+#       dest: "{{home_dir}}/.bashrc"
+#       block: |
+#         export GOPATH=$HOME/go
+#         export GOROOT=$HOME
+#         export GOBIN=$HOME/go/bin
+#         export PATH=$GOBIN:$PATH:/usr/local/go/bin
+#       marker: '# {mark} ANSIBLE MANAGED BLOCK - changes for golang'
+#       insertafter: EOF
+#       create: yes
 
-  - name: download golang tar
-    get_url:
-      url: "https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz"
-      dest: "{{home_dir}}"
-      mode: 0440
 
-  - name: check if downloaded
-    command: ls
-    register: ls
-  - debug: msg="{{ls.stdout}}"
-
-  - name: Extract Go
-    unarchive:
-      src: "{{home_dir}}/go{{new_go_version}}.linux-amd64.tar.gz"
-      dest: /usr/local
-      copy: no
-    become: yes
+#   - name: dep
+#     hosts: all
+#     environment: 
+#       GOPATH: "{{ go_path }}"
+#     shell: |
+#       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
   
-  - name : Create go directories in home
-    file:
-      path: "{{item}}"
-      state: directory
-      owner: "{{file_owner}}"
-      group: "{{file_owner}}"
-      mode: 0775
-    with_items:
-      - "{{home_dir}}/go"
-      - "{{home_dir}}/go/bin"
-
-  - name: modify .bashrc
-    blockinfile: 
-      dest: "{{home_dir}}/.bashrc"
-      block: |
-        export GOPATH=$HOME/go
-        export GOBIN=$GOPATH/bin
-        export PATH=$GOBIN:$PATH:/usr/local/go/bin
-      marker: '# {mark} ANSIBLE MANAGED BLOCK - changes for golang'
-      insertafter: EOF
-      create: yes
-  
-- name: Install Dep
-  # hosts: all
-  # become: yes
-  # become_method: sudo
-  # gather_facts: yes
-  # tasks: 
-  # - name: Dep installation
-  #   get_url: 
-
 
 - name: Deploy Application
   hosts: all
+  become: yes
+  become_method: sudo
   vars:
-  tasks: 
+  tasks:
+
+    - name: Unarchive application
+      unarchive:
+        src: https://github.com/servian/TechTestApp/releases/download/v.0.6.0/TechTestApp_v.0.6.0_linux64.zip
+        dest: /etc
+        remote_src: yes
+
+    - name: Update Database endpoint
+      shell: | 
+        cd ../infra
+        terraform output database_template
+      register: database_output
+      delegate_to: localhost
+
+    - copy: 
+        content: "{{database_output.stdout}}"
+        dest: /etc/dist/conf.toml
+    
+    # - name: Ensure apache is installed
+    #   package:
+    #     name: httpd
+    #     state: present
+
+
+    # - name: Always reload httpd
+    #   service:
+    #     name: httpd
+    #     enabled: yes
+    #     state: started
+
+    - name: create service 
+      template:
+        src: ./templates/test.tpl
+        dest: /etc/systemd/system/test.service
+    
+    - name: start serve
+      systemd:
+        name: test
+        daemon_reload: yes
+        state: started
+        enabled: yes
+
+
+
+
+    
+  
