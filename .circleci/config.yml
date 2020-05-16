@@ -12,32 +12,48 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Fetch repo
-      run: 'git clone https://github.com/RMIT-COSC2759-SDO/assessment2-student-s3679389.git'
-      shell: sh
+    - run: 
+        name: Fetch repo
+        command: |
+          'git clone https://github.com/RMIT-COSC2759-SDO/assessment2-student-s3679389.git'
+        shell: sh
 
-    - name: Checkout master
-      run: 'git checkout master'
+    - run: 
+        name: Checkout master
+        command: |
+          'git checkout master'
+
+    - run: 
+        name: Download AWS Config
+        command: |
+          '(curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -q awscliv2.zip && sudo ./aws/install)'
+        shell: sh
     
-    - name: Download AWS Config
-      run: '(curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -q awscliv2.zip && sudo ./aws/install)'
-      shell: sh
+    - run: 
+        name: Setup AWS CLI
+        command: |
+          'aws configure set aws_access_key_id ${{secrets.AWS_ACCESS_KEY}} &&
+            aws configure set aws_secret_access_key ${{secrets.AWS_SECRET_KEY}} && 
+            aws configure set region ${{secrets.AWS_REGION}}'
+        shell: sh
 
-    - name: Setup AWS CLI
-      run: 'aws configure set aws_access_key_id ${{secrets.AWS_ACCESS_KEY}} &&
-       aws configure set aws_secret_access_key ${{secrets.AWS_SECRET_KEY}} && aws configure set region ${{secrets.AWS_REGION}}'
-      shell: sh
+    - run: 
+        name: Install Terraform
+        command: |
+          'wget https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip'
 
-    - name: Install Terraform
-      run: 'wget https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip'
+    - run: 
+        name: Unzip Terraform Package
+        command: |
+          'unzip -o terraform_0.12.24_linux_amd64.zip'
 
-    - name: Unzip Terraform Package
-      run: 'unzip -o terraform_0.12.24_linux_amd64.zip'
+    - run: 
+        name: Init Terraform
+        command: |
+          'rm -rf .terraform/ && terraform init'
 
-    - name: Init Terraform
-      run: 'rm -rf .terraform/ && terraform init'
-      
-    - name: Execute 
-      run: 
+    
+    - run: 
+        name: Execute
         command: | 
-          make up
+          'make up'
