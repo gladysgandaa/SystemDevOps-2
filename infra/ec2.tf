@@ -3,17 +3,6 @@ resource "aws_key_pair" "deployer" {
   public_key = var.public_key
 }
 
-# resource "aws_instance" "techtest_app" {
-#   ami                    = var.ami_id
-#   instance_type          = "t2.micro"
-#   vpc_security_group_ids = [aws_security_group.allow_http_ssh.id]
-#   subnet_id              = aws_subnet.private_az1.id
-#   key_name               = aws_key_pair.deployer.key_name
-
-#   tags = {
-#     Name = "techtest_app"
-#   }
-# }
 resource "aws_launch_configuration" "techtest_app" {
   name            = "web_config"
   image_id        = var.ami_id
