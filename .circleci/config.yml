@@ -7,6 +7,9 @@ on:
 
 jobs:
   build:
+    docker: 
+      - image: cimg/base:2020.01
+    context: aws-credentials
     runs-on: ubuntu-latest
 
     steps:
@@ -32,9 +35,9 @@ jobs:
     - run: 
         name: Setup AWS CLI
         command: |
-          'aws configure set aws_access_key_id ${{secrets.AWS_ACCESS_KEY}} &&
-            aws configure set aws_secret_access_key ${{secrets.AWS_SECRET_KEY}} && 
-            aws configure set region ${{secrets.AWS_REGION}}'
+          'aws configure set aws_access_key_id ${{AWS_ACCESS_KEY}} &&
+            aws configure set aws_secret_access_key ${{AWS_SECRET_KEY}} && 
+            aws configure set region ${{AWS_REGION}}'
         shell: sh
 
     - run: 
