@@ -13,14 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # - uses: actions/checkout@v2
 
     - run: 
         name: Fetch repo
         command: |
           'git clone https://github.com/RMIT-COSC2759-SDO/assessment2-student-s3679389.git'
-        shell: sh
-
+          
     - run: 
         name: Checkout master
         command: |
