@@ -5,6 +5,14 @@ on:
   pull_request:
     branches: [ master ]
 
+
+jobs:
+  deploy-job:
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "c7:31:08:c1:28:8b:b9:39:e1:68:6c:83:6d:31:e4:9c"
+
 jobs:
   build:
     docker: 
