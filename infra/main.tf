@@ -64,13 +64,13 @@ resource "aws_security_group" "allow_http_ssh" {
 resource "aws_s3_bucket" "terraform-state-storage-s3" {
   bucket = "s3679389-bucket"
 
-  # versioning {
-  #   enabled = true
-  # }
+  versioning {
+    enabled = true
+  }
 
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
+  lifecycle {
+    prevent_destroy = true
+  }
 
   tags = {
     Name = "s3 Remote Terraform State"
@@ -102,12 +102,3 @@ resource "aws_dynamodb_table" "dynamodb-terraform-state-lock" {
     Name = "DynamoDB Terraform State Lock Table"
   }
 }
-
-# data "terraform_remote_state" "network" {
-#   backend = "s3"
-#   config = {
-#     bucket = "terraform-state-prod"
-#     key    = "network/terraform.tfstate"
-#     region = "us-east-1"
-#   }
-# }
