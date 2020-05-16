@@ -23,7 +23,7 @@ resource "aws_launch_configuration" "techtest_app" {
 }
 
 resource "aws_autoscaling_group" "techtest_app" {
-  name                 = "terraforn-asg-example"
+  name                 = "terraform-asg-example"
   launch_configuration = aws_launch_configuration.techtest_app.name
   min_size             = 1
   max_size             = 1

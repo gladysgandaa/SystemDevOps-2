@@ -14,6 +14,7 @@ resource "aws_db_instance" "techtest_app" {
   name                      = "app"
   username                  = var.db_username
   password                  = var.db_password
+  port                      = var.db_port
   db_subnet_group_name      = aws_db_subnet_group.db-subnet.id
   final_snapshot_identifier = "foo"
   skip_final_snapshot       = true

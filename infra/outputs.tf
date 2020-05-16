@@ -39,6 +39,8 @@ data "template_file" "database" {
     db_host     = aws_db_instance.techtest_app.address
     db_username = aws_db_instance.techtest_app.username
     db_password = aws_db_instance.techtest_app.password
+    db_port     = aws_db_instance.techtest_app.port
+    db_name     = aws_db_instance.techtest_app.name
   }
 }
 
@@ -60,4 +62,12 @@ output "ansible_inventory" {
 
 output "database_template" {
   value = data.template_file.database.rendered
+}
+
+output "s3_bucket_name" {
+  value = aws_s3_bucket.terraform-state-storage-s3.bucket
+}
+
+output "dynamodb_bucket_name" {
+  value = aws_dynamodb_table.dynamodb-terraform-state-lock.name
 }

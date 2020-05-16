@@ -4,8 +4,8 @@ Description=TechTestApp Server
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/etc/dist/
-ExecStart=/etc/dist/TechTestApp serve
+WorkingDirectory=/etc/app/dist
+ExecStart=/etc/app/dist/TechTestApp serve
 Restart=on-failure
 
 [Install]

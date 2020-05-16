@@ -5,22 +5,26 @@
   vars:
   tasks:
 
+    - name: Create an app folder
+      file:
+        path: /etc/app
+        state: directory
+
     - name: Unarchive application
       unarchive:
         src: https://github.com/servian/TechTestApp/releases/download/v.0.6.0/TechTestApp_v.0.6.0_linux64.zip
-        dest: /etc
+        dest: /etc/app
         remote_src: yes
 
     - name: Update Database endpoint
-      shell: | 
-        cd ../infra
-        terraform output database_template
-      register: database_output
-      delegate_to: localhost
+      template:
+        src: ./templates/database_rendered.tpl
+        dest: /etc/app/dist/conf.toml
 
-    - copy: 
-        content: "{{database_output.stdout}}"
-        dest: /etc/dist/conf.toml
+    - name: seed data to database
+      shell: |
+        cd /etc/app/dist
+        ./TechTestApp updatedb -s
     
     - name: create service 
       template:
