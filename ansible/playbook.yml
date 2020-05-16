@@ -1,56 +1,3 @@
-# - name: Install required dependencies
-#   hosts: all
-#   become: yes
-#   become_method: sudo
-#   vars:
-#     home_dir: "/home/ec2-user"
-#     go_path: "/home/ec2-user/go"
-#     file_owner: "ec2-user"
-#     new_go_version: "1.14.2"
-#   tasks: 
-
-#   - name: Install git
-#     hosts: all
-#     shell: |
-#       yum install -y git
-
-#   - name: Install go
-#     hosts: all
-#     shell: |
-#       yum install -y go
-    
-#   - name : Create go directories in home
-#     file:
-#       path: "{{item}}"
-#       state: directory
-#       owner: "{{file_owner}}"
-#       group: "{{file_owner}}"
-#       mode: 0775
-#     with_items:
-#       - "{{home_dir}}/go"
-#       - "{{home_dir}}/go/bin"
-
-#   - name: modify .bashrc
-#     blockinfile: 
-#       dest: "{{home_dir}}/.bashrc"
-#       block: |
-#         export GOPATH=$HOME/go
-#         export GOROOT=$HOME
-#         export GOBIN=$HOME/go/bin
-#         export PATH=$GOBIN:$PATH:/usr/local/go/bin
-#       marker: '# {mark} ANSIBLE MANAGED BLOCK - changes for golang'
-#       insertafter: EOF
-#       create: yes
-
-
-#   - name: dep
-#     hosts: all
-#     environment: 
-#       GOPATH: "{{ go_path }}"
-#     shell: |
-#       curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-  
-
 - name: Deploy Application
   hosts: all
   become: yes
@@ -75,18 +22,6 @@
         content: "{{database_output.stdout}}"
         dest: /etc/dist/conf.toml
     
-    # - name: Ensure apache is installed
-    #   package:
-    #     name: httpd
-    #     state: present
-
-
-    # - name: Always reload httpd
-    #   service:
-    #     name: httpd
-    #     enabled: yes
-    #     state: started
-
     - name: create service 
       template:
         src: ./templates/test.tpl
@@ -94,11 +29,12 @@
     
     - name: start serve
       systemd:
-        name: test
         daemon_reload: yes
+        name: test
         state: started
         enabled: yes
-
+      become: yes
+      become_method: sudo
 
 
 

@@ -1,5 +1,5 @@
 output "instance_public_ip" {
-  value = aws_instance.techtest_app.public_ip
+  value = data.aws_instances.techtest_app.public_ips
 }
 
 output "lb_endpoint" {
@@ -23,10 +23,10 @@ output "db_pass" {
 data "template_file" "inventory" {
   template = file("../ansible/templates/inventory.tpl")
   depends_on = [
-    aws_instance.techtest_app
+    aws_autoscaling_group.techtest_app
   ]
   vars = {
-    ec2_public_ip = aws_instance.techtest_app.public_ip
+    ec2_public_ip = element(data.aws_instances.techtest_app.public_ips, 0)
   }
 }
 

@@ -1,9 +1,12 @@
 [Unit]
-Description= TechTestApp Server 
+Description=TechTestApp Server 
 
 [Service]
-ExecStartPre= /etc/dist/TechTestApp
-ExecStart= /etc/dist/TechTestApp serve
+Type=simple
+User=root
+WorkingDirectory=/etc/dist/
+ExecStart=/etc/dist/TechTestApp serve
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target 

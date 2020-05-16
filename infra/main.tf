@@ -61,13 +61,47 @@ resource "aws_security_group" "allow_http_ssh" {
   }
 }
 
-# terraform {
-#   backend "s3" {
-#     bucket = "techtestapp-s3679839-bucket"
-#     key    = "terraform.tfstate.d"
-#     region = "us-east-1"
-#   }
-# }
+resource "aws_s3_bucket" "terraform-state-storage-s3" {
+  bucket = "s3679389-bucket"
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  tags = {
+    Name = "s3 Remote Terraform State"
+  }
+}
+
+terraform {
+  backend "s3" {
+    encrypt = true
+    bucket  = "s3679389-bucket"
+    key     = "terraform.tfstate"
+    region  = "us-east-1"
+    dynamodb_table = "techtestapp-dynamodb-table"
+  }
+}
+
+resource "aws_dynamodb_table" "dynamodb-terraform-state-lock" {
+  name           = "techtestapp-dynamodb-table"
+  hash_key       = "LockID"
+  read_capacity  = 20
+  write_capacity = 20
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+
+  tags = {
+    Name = "DynamoDB Terraform State Lock Table"
+  }
+}
 
 # data "terraform_remote_state" "network" {
 #   backend = "s3"
