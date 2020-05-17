@@ -55,6 +55,7 @@ jobs:
     - run: 
         name: Init Terraform
         command: |
+          cd infra
           rm -rf .terraform/ && terraform init
 
     - run: 
