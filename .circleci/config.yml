@@ -26,6 +26,7 @@ jobs:
     - run: 
         name: Checkout master
         command: |
+          cd sdo-ass2
           git checkout master
 
     - run: 
