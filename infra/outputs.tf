@@ -68,6 +68,6 @@ output "s3_bucket_name" {
   value = aws_s3_bucket.terraform-state-storage-s3.bucket
 }
 
-output "dynamodb_bucket_name" {
-  value = aws_dynamodb_table.dynamodb-terraform-state-lock.name
-}
+# output "dynamodb_bucket_name" {
+#   value = aws_dynamodb_table.dynamodb-terraform-state-lock.name
+# }
