@@ -83,22 +83,22 @@ terraform {
     bucket         = "s3679389-bucket"
     key            = "terraform.tfstate"
     region         = "us-east-1"
-    # dynamodb_table = "techtestapp-dynamodb-table"
+    dynamodb_table = "techtestapp-dynamodb-table"
   }
 }
 
-# resource "aws_dynamodb_table" "dynamodb-terraform-state-lock" {
-#   name           = "techtestapp-dynamodb-table"
-#   hash_key       = "LockID"
-#   read_capacity  = 20
-#   write_capacity = 20
+resource "aws_dynamodb_table" "dynamodb-terraform-state-lock" {
+  name           = "techtestapp-dynamodb-table"
+  hash_key       = "LockID"
+  read_capacity  = 20
+  write_capacity = 20
 
-#   attribute {
-#     name = "LockID"
-#     type = "S"
-#   }
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
 
-#   tags = {
-#     Name = "DynamoDB Terraform State Lock Table"
-#   }
-# }
+  tags = {
+    Name = "DynamoDB Terraform State Lock Table"
+  }
+}
