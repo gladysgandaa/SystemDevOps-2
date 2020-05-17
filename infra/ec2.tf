@@ -11,6 +11,14 @@ resource "aws_launch_configuration" "techtest_app" {
   key_name        = aws_key_pair.deployer.key_name
 }
 
+resource "aws_lb_target_group" "techtest_app" {
+  name     = "techtest-app-target-group"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main.id
+}
+
+
 resource "aws_autoscaling_group" "techtest_app" {
   name                 = "terraform-asg-example"
   launch_configuration = aws_launch_configuration.techtest_app.name
@@ -24,6 +32,8 @@ resource "aws_autoscaling_group" "techtest_app" {
     propagate_at_launch = true
   }
 }
+
+
 
 data "aws_instances" "techtest_app" {
   depends_on = [aws_autoscaling_group.techtest_app]
@@ -42,14 +52,6 @@ resource "aws_lb" "techtest_app" {
   tags = {
     Environment = "production"
   }
-}
-
-
-resource "aws_lb_target_group" "techtest_app" {
-  name     = "todo-app-target-group"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
 }
 
 resource "aws_lb_listener" "techtest_app" {
