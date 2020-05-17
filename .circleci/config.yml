@@ -61,5 +61,4 @@ jobs:
         name: Execute
         command: | 
           cd sdo-ass2
-          ls
           make up
