@@ -59,7 +59,7 @@ jobs:
           rm -rf .terraform/ && terraform init
 
     - run: 
-        name: Execute
+        name: Execute application
         command: | 
           cd sdo-ass2
           make up
