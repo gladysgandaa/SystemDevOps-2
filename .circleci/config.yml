@@ -43,6 +43,11 @@ jobs:
           aws configure set region ${AWS_REGION} 
         shell: sh
 
+    - run:
+        name: Install ansible
+        command: |
+          sudo-apt-get install ansible -y
+
     - run: 
         name: Install Terraform
         command: |
@@ -64,3 +69,9 @@ jobs:
         command: | 
           cd sdo-ass2
           make up
+    
+    - run:
+        name: Run playbook
+        command: |
+          cd /ansible
+          ./run_ansible.sh
