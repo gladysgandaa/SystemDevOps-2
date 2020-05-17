@@ -29,11 +29,6 @@ jobs:
           cd sdo-ass2
           git checkout master
         
-    - run:
-        name: Install ansible
-        command: |
-          sudo apt-get install ansible
-
     - run: 
         name: Download AWS Config
         command: |
@@ -71,8 +66,8 @@ jobs:
           cd sdo-ass2
           make up
     
-    - run:
-        name: Run playbook
-        command: |
-          cd /ansible
-          ./run_ansible.sh
+workflows:
+  version: 2
+  build-test-package:
+    jobs:
+      - build
