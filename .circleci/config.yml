@@ -28,6 +28,11 @@ jobs:
         command: |
           cd sdo-ass2
           git checkout master
+        
+    - run:
+        name: Install ansible
+        command: |
+          sudo apt-get install ansible -y
 
     - run: 
         name: Download AWS Config
@@ -43,10 +48,6 @@ jobs:
           aws configure set region ${AWS_REGION} 
         shell: sh
 
-    - run:
-        name: Install ansible
-        command: |
-          sudo apt-get install ansible -y
 
     - run: 
         name: Install Terraform
